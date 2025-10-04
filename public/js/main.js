@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // SWA automatycznie mapuje funkcję do ścieżki /api/{functionName}
-    const apiEndpoint = '/api/ApiFunction'; 
+    const apiEndpoint = '/api/PoolApiFunction'; 
 
     fetch(apiEndpoint)
         .then(response => {
