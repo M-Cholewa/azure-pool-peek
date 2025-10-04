@@ -78,13 +78,22 @@
 
 
 import logging
-import json
 import datetime
-import os
 import azure.functions as func
-from azure.functions import HttpResponse
-from azure.data.tables import TableServiceClient, QueryDelimiter
 
-def main(timer_trigger1: func.TimerRequest) -> None:
-    logging.info('Funkcja została uruchomiona!')
+def main(mytimer: func.TimerRequest) -> None:
+    try:
+        utc = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
+        logging.info("Timer trigger fired at %s", utc)
 
+        if mytimer.past_due:
+            logging.warning("Timer is past due!")
+
+        # TODO: przenieś ciężkie importy (requests, bs4, azure.data.tables) tutaj
+        # import requests
+        # from bs4 import BeautifulSoup
+        # from azure.data.tables import TableServiceClient
+
+        # ...tutaj twoja logika scrapowania i zapisu...
+    except Exception:
+        logging.exception("Unhandled exception in PoolScraperFunction")
