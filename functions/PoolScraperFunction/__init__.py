@@ -77,14 +77,9 @@
 
 
 
-import datetime
 import logging
 import azure.functions as func
 
-def main(mytimer: func.TimerRequest) -> None:
-    utc_timestamp = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
+def main(timer_trigger1: func.TimerRequest) -> None:
+    logging.info('Funkcja została uruchomiona!')
 
-    if mytimer.past_due:
-        logging.warning('Timer is past due!')
-
-    logging.info('Python timer trigger function ran at %s', utc_timestamp)
