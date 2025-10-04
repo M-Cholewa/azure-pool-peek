@@ -1,0 +1,9 @@
+# Azure Functions
+azure-functions
+
+# Web scraping
+requests
+beautifulsoup4
+
+# Azure Table Storage
+azure-data-tables
