@@ -13,9 +13,9 @@ def main(req: func.HttpRequest) -> HttpResponse:
         target_date = req.params.get('date') or datetime.datetime.now().strftime("%Y-%m-%d")
 
         # 1. Odczyt z Azure Table Storage
-        connection_string = os.environ["AzureWebJobsStorage"] 
+        connection_string = os.environ["POOL_STORAGE_CONNECTION"] 
         table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
-        table_client = table_service_client.get_table_client(table_name="PoolCounterData")
+        table_client = table_service_client.get_table_client(table_name="poolpeektable")
 
         # Zapytanie filtrujące po PartitionKey (dacie)
         filter_query = f"PartitionKey eq '{target_date}'"
