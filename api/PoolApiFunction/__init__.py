@@ -2,6 +2,7 @@ import logging
 import json
 import datetime
 import os
+import azure.functions as func
 from azure.functions import HttpResponse
 from azure.data.tables import TableServiceClient, QueryDelimiter
 

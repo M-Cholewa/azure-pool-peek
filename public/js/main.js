@@ -1,23 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // SWA automatycznie mapuje funkcję do ścieżki /api/{functionName}
-    const apiEndpoint = '/api/PoolApiFunction'; 
+    const apiEndpoint = '/api/PoolApiFunction';
 
     fetch(apiEndpoint)
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                throw new Error(`Błąd sieci: ${response.statusText}`);
+                // próbujemy odczytać treść odpowiedzi (tekst/json)
+                let bodyText;
+                try {
+                    bodyText = await response.text();
+                } catch (e) {
+                    bodyText = '<nie można odczytać body>';
+                }
+                const msg = `HTTP ${response.status} ${response.statusText} - ${bodyText}`;
+                console.error('API response not ok:', msg, response);
+                throw new Error(msg);
             }
-            return response.json();
+            // bezpieczne parsowanie JSON — jeśli serwer zwraca pusty string, obsłużymy to
+            try {
+                return await response.json();
+            } catch (e) {
+                console.error('Błąd parsowania JSON z API:', e);
+                throw new Error('Nieprawidłowy JSON z API');
+            }
         })
         .then(data => {
-            // Przetwarzanie danych dla Chart.js
-            const labels = data.map(item => item.time); // Czas (X)
-            const counts = data.map(item => item.count); // Liczba osób (Y)
+            const labels = data.map(item => item.time);
+            const counts = data.map(item => item.count);
 
             const ctx = document.getElementById('poolChart').getContext('2d');
-            
+
             new Chart(ctx, {
-                type: 'line', // Wykres liniowy
+                type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
@@ -31,31 +44,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 options: {
                     responsive: true,
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Liczba Osób'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Godzina'
-                            }
-                        }
+                        y: { beginAtZero: true, title: { display: true, text: 'Liczba Osób' } },
+                        x: { title: { display: true, text: 'Godzina' } }
                     },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Statystyki Obłożenia Basenu'
-                        }
-                    }
+                    plugins: { title: { display: true, text: 'Statystyki Obłożenia Basenu' } }
                 }
             });
         })
         .catch(error => {
             console.error('Błąd pobierania danych:', error);
-            document.querySelector('h1').textContent = 'Nie udało się załadować wykresu: ' + error.message;
+            document.querySelector('h1').textContent = 'Nie udało się załadować wykresu: ' + (error.message || error);
         });
 });
