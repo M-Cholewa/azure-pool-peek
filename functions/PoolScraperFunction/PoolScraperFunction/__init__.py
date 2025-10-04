@@ -81,12 +81,12 @@ import logging
 import datetime
 import azure.functions as func
 
-def main(mytimer: func.TimerRequest) -> None:
+def main(timer_trigger1: func.TimerRequest) -> None:
     try:
         utc = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
         logging.info("Timer trigger fired at %s", utc)
 
-        if mytimer.past_due:
+        if timer_trigger1.past_due:
             logging.warning("Timer is past due!")
 
         # TODO: przenieś ciężkie importy (requests, bs4, azure.data.tables) tutaj
