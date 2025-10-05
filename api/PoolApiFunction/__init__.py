@@ -21,7 +21,7 @@ def main(req: func.HttpRequest) -> HttpResponse:
         # Zapytanie filtrujące po PartitionKey (dacie)
         filter_query = f"PartitionKey eq '{target_date}'"
         
-        entities = table_client.query_entities(filter=filter_query)
+        entities = table_client.query_entities(query_filter=filter_query)
 
         data = []
         for entity in entities:
