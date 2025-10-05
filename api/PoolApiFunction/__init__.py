@@ -4,7 +4,7 @@ import datetime
 import os
 import azure.functions as func
 from azure.functions import HttpResponse
-from azure.data.tables import TableServiceClient, QueryDelimiter
+from azure.data.tables import TableServiceClient
 
 def main(req: func.HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
