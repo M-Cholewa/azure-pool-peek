@@ -28,11 +28,14 @@ def main(req: func.HttpRequest) -> HttpResponse:
             # Tworzenie obiektu przyjaznego dla JSON i wykresu
             data.append({
                 "time": entity.get("Timestamp", ""),
+                "rowkey": entity.get("RowKey", ""),
                 "count": entity.get("PeopleCount", 0)
             })
 
         # Sortowanie danych po RowKey, aby były chronologiczne
-        data.sort(key=lambda x: datetime.datetime.strptime(x["time"], "%H:%M:%S"))
+        # data.sort(key=lambda x: datetime.datetime.strptime(x["time"], "%H:%M:%S"))
+        data.sort(key=lambda x: int(x["rowkey"]))
+
 
         # 2. Zwrócenie danych jako JSON
         return HttpResponse(
