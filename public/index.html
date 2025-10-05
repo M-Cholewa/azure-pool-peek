@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>PoolPeek - Licznik Osób</title>
+    <style>
+        .chart-container { height: 80vh; width: 100%; }
+        .controls { margin: 12px 0; display:flex; gap:8px; align-items:center; }
+    </style>
     <!-- <link rel="stylesheet" href="/css/style.css"> -->
 </head>
 <body>
-    <h1>Liczba Osób na Basenie (Dziś)</h1>
+    <h1 id="pageTitle">Liczba Osób na Basenie (Dziś)</h1>
+
+    <div class="controls">
+        <label for="datePicker">Wybierz datę:</label>
+        <input id="datePicker" type="date" />
+        <button id="applyDate">Pokaż</button>
+        <button id="todayBtn">Dziś</button>
+    </div>
+
     <div class="chart-container">
         <canvas id="poolChart"></canvas>
     </div>

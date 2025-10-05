@@ -7,3 +7,4 @@ beautifulsoup4
 
 # Azure Table Storage
 azure-data-tables
+tzdata

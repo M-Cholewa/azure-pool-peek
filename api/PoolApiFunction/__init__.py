@@ -5,6 +5,7 @@ import os
 import azure.functions as func
 from azure.functions import HttpResponse
 from azure.data.tables import TableServiceClient
+from zoneinfo import ZoneInfo
 
 def main(req: func.HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -25,21 +26,33 @@ def main(req: func.HttpRequest) -> HttpResponse:
 
         data = []
         for entity in entities:
-            # Tworzenie obiektu przyjaznego dla JSON i wykresu
+            rowkey_str = entity.get("RowKey", "")
+            timestamp_float = 0.0
+            try:
+                # Konwersja RowKey -> timestamp float
+                timestamp_float = float(rowkey_str[:10] + "." + rowkey_str[10:]) if len(rowkey_str) > 10 else float(rowkey_str)
+                dt = datetime.datetime.fromtimestamp(timestamp_float, tz=datetime.timezone.utc).astimezone(ZoneInfo("Europe/Warsaw"))
+                formatted_time = dt.strftime("%d-%m-%Y %H:%M:%S")
+            except Exception as e:
+                logging.error(f"Błąd konwersji RowKey na timestamp: {e}")
+                formatted_time = rowkey_str  # fallback gdyby coś poszło nie tak
+
             data.append({
-                "time": entity.get("Timestamp", ""),
-                "rowkey": entity.get("RowKey", ""),
-                "count": entity.get("PeopleCount", 0)
+                "timestamp_float": timestamp_float,
+                "time": formatted_time,
+                "count": entity.get("PeopleCount", 0),
+                "rowkey": rowkey_str
             })
 
-        # Sortowanie danych po RowKey, aby były chronologiczne
-        # data.sort(key=lambda x: datetime.datetime.strptime(x["time"], "%H:%M:%S"))
-        data.sort(key=lambda x: int(x["rowkey"]))
+        # Sortowanie po RowKey numerycznie
+        data.sort(key=lambda x: x["timestamp_float"])
 
+        # Do responsa tylko czas i liczba osób
+        response_data = [{"time": d["time"], "count": d["count"]} for d in data]
 
         # 2. Zwrócenie danych jako JSON
         return HttpResponse(
-            json.dumps(data),
+            json.dumps(response_data),
             mimetype="application/json",
             status_code=200
         )
